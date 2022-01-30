@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+       <record id="purchase_order_form_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                 <field name="partner_id" position="before">
+                    <field name="user_status" invisible="1"/>
+                    <field name="po_individual_approval" invisible="1"/>
+                 </field>
+                 <xpath expr="//form/header/button[@id='draft_confirm']" position="replace">
+                     <button name="button_confirm" type="object" string="Confirm Order" id="draft_confirm" class="oe_highlight"
+                      attrs="{'invisible':['|',('state', '!=','draft'),('po_individual_approval','=',True)]}" />
+                     <button name="action_submit" type="object"  string="Submit" class="oe_highlight"
+                      attrs="{'invisible':['|',('state', '!=','draft'),('po_individual_approval','=',False)]}" />
+
+                  </xpath>
+                 <xpath expr="//form/header/button[@id='bid_confirm']" position="replace">
+                     <button name="button_confirm" type="object"  string="Confirm Order" class="oe_highlight" id="bid_confirm"
+                    attrs="{'invisible':['|',('state', '!=','sent'),('po_individual_approval','=',True)]}" />
+                     <button name="action_submit" type="object" string="Submit" class="oe_highlight"
+                             attrs="{'invisible':['|',('state', '!=','sent'),('po_individual_approval','=',False)]}" />
+                  </xpath>
+
+                 <xpath expr="//form/header/button[@name='button_approve']" position="replace">
+                     <button name="button_approve" type="object"  string="Approve Order"
+                             class="oe_highlight" attrs="{'invisible':[('user_status','!=','to approve')]}"/>
+                     <button name="%(sme_purchase_approval.purchase_refuse_wizard_action)d"  type="action" string="Refuse Order"
+                             class="oe_highlight" attrs="{'invisible':[('user_status','!=','to approve')]}"/>
+
+                    <!--name="button_refuse"-->
+
+                 </xpath>
+                 <xpath expr="//page[@name='purchase_delivery_invoice']" position="after">
+                     <page string="Approver(s)" name="purchase_approvers"  attrs="{'invisible': [('po_individual_approval','!=',True)]}">
+                            <field name="approver_ids" mode="tree,kanban"   attrs="{'readonly': [('state', 'in',('done','purchase'))]}">
+                                <tree editable="bottom" decoration-success="status=='purchase'" decoration-warning="status=='to approve'" decoration-danger="status=='cancel'">
+<!--                                    <field name="sequence"/>-->
+                                    <field name="user_id" string="Approver" attrs="{'readonly':[('status','!=','draft')]}"/>
+                                    <field name="status"/>
+                                    <button name="action_create_activity" type="object"
+                                            icon="fa-paper-plane"
+                                            width="0.1"
+                                            role="img" title="Submit Approval"
+                                            attrs="{'invisible': [('status', 'not in', ('draft','sent'))]}"
+                                            />
+                                </tree>
+                                <kanban class="o_kanban_mobile">
+                                    <field name="user_id"/>
+                                    <field name="status"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="o_kanban_content">
+                                                    <t t-esc="record.user_id.value"/>
+                                                    <t t-if="record.status.raw_value">
+                                                        <t t-set="classname" t-value="{'approved': 'badge-success', 'pending': 'badge-warning', 'cancel': 'badge-danger'}[record.status.raw_value] || 'badge-light'"/>
+                                                        <span t-esc="record.status.raw_value" t-attf-class="float-right badge-pill {{ classname }}"/>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form>
+                                    <group>
+                                        <field name="user_id"/>
+                                    </group>
+                                </form>
+                            </field>
+                     </page>
+                </xpath>
+
+                 <xpath expr="//field[@name='price_unit']" position="attributes">
+                     <attribute name="attrs">{'readonly': ['|',('state', '=', 'purchase'),('invoice_lines', '!=', [])]}</attribute>
+                 </xpath>
+            </field>
+       </record>
+
+      <record id="purchase_order_tree_approver_inheirt" model="ir.ui.view">
+            <field name="name">purchase.order.tree.approver.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="origin" position="after">
+                      <field name="po_individual_approval" invisible="1"/>
+                      <field name="approver_ids" widget="many2many_tags" optional="show" attrs="{'invisible': [('po_individual_approval','!=',True)]}"/>
+                </field>
+            </field>
+       </record>
+
+        <record id="purchase_order_view_tree_approver_inheirt" model="ir.ui.view">
+            <field name="name">purchase.order.view.tree.approver.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+            <field name="arch" type="xml">
+                <field name="origin" position="after">
+                      <field name="po_individual_approval" invisible="1"/>
+                      <field name="approver_ids" widget="many2many_tags" optional="show" attrs="{'invisible': [('po_individual_approval','!=',True)]}"/>
+                </field>
+            </field>
+       </record>
+
+</odoo>
