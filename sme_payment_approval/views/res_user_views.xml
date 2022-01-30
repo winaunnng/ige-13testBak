@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_analytic_account_security_users_form" model="ir.ui.view">
+            <field name="name">analytic_account_security.users.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <notebook>
+                    <page string="Others" >
+                          <group string="Analytic Account" attrs="{'invisible': [('login','=', 'admin')]}">
+
+                                <field name="analytic_account_ids" widget="many2many_tags" />
+                          </group>
+
+
+                    </page>
+                </notebook>
+            </field>
+        </record>
+    </data>
+</odoo>
