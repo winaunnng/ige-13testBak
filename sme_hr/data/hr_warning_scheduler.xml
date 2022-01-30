@@ -1,0 +1,15 @@
+<odoo>
+    <!-- Scheduler For Hotel Room -->
+     <record model="ir.cron" id="hr_warning_line_cron">
+        <field name="name">Clear HR Warning </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="(DateTime.now().replace(hour=23, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')" />
+        <field name="doall" eval="False"/>
+        <field name="model_id" ref="hr.model_hr_employee" />
+        <field name="code">model.action_cron_clear_warning()</field>
+        <field name="state">code</field>
+    </record>
+
+</odoo>
