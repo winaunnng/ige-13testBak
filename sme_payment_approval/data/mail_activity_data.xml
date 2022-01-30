@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data >
+        <record id="mail_activity_data_payment_approval" model="mail.activity.type">
+            <field name="name">Advance Payment Approval</field>
+            <field name="icon">fa-check-circle</field>
+            <field name="sequence">4</field>
+            <field name="res_model_id" ref="account.model_account_payment"/>
+        </record>
+         <template id="payment_template_refuse_reason">
+            <p>Your payment <t t-esc="name"/> <span t-if="ref"> (Ref- <t t-esc="ref"/>)</span> has been refused</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>Reason : <t t-esc="reason"/></li>
+            </ul>
+        </template>
+<!--        <template id="payment_template_approve">-->
+<!--            <p>Your payment <t t-esc="name"/> <span t-if="ref"> (Ref- <t t-esc="ref"/>)</span> has been approved</p>-->
+<!--        </template>-->
+    </data>
+</odoo>
