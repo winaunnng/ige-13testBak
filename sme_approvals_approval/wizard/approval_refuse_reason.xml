@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="approval_refuse_wizard_view_form" model="ir.ui.view">
+        <field name="name">approval.refuse.wizard.form</field>
+        <field name="model">approval.refuse.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Approval refuse reason">
+                <separator string="Reason to refuse request"/>
+                <field name="request_id" invisible="1"/>
+                <field name="reason"/>
+                <footer>
+                    <button string='Refuse' name="approval_refuse_reason" type="object" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+           </form>
+        </field>
+    </record>
+
+    <record id="approval_refuse_wizard_action" model="ir.actions.act_window">
+        <field name="name">Refuse Request </field>
+        <field name="res_model">approval.refuse.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="approval_refuse_wizard_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>
