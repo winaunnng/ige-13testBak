@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <report
+            id="hr_job_report"
+            model="hr.job"
+            string="Job Position"
+            report_type="xlsx"
+            name="sme_hr.xlsx_hr_job_report"
+            file="Job Position Report"
+            attachment_use="False"
+        />
+
+        <report
+            id="payroll_run_report"
+            model="hr.payslip.run"
+            string="Payroll Xls"
+            report_type="xlsx"
+            name="sme_hr.xlsx_payroll_run_report"
+            file="Batch - Payroll Report"
+            attachment_use="False"
+        />
+
+       <report
+            id="payroll_report"
+            model="hr.payslip"
+            string="Payroll Xls"
+            report_type="xlsx"
+            name="sme_hr.xlsx_payroll_report"
+            file="Payroll Report"
+            attachment_use="False"
+       />
+
+</odoo>
