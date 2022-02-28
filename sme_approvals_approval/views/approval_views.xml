@@ -39,7 +39,7 @@
             <group name="request_details" position="inside">
                  <field name="priority" widget="priority"
                    attrs="{'invisible':[('has_priority','==','no')], 'required': [('has_priority','==','required')], 'readonly': [('request_status','not in',('new', 'pending'))]}"/>
-                <field name="company_id" invisible="1"/>
+
             </group>
 
         </field>

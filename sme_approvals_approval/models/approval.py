@@ -40,27 +40,27 @@ class ApprovalRequest(models.Model):
         ('pending', 'Submitted'),
         ('approved', 'Approved'),
         ('refused', 'Refused'),
-        ('cancel', 'Cancel')], default="new", compute="_compute_request_status", store=True, compute_sudo=True,
+        ('cancel', 'Cancel'),
+    ], default="new", compute="_compute_request_status",
+        store=True, tracking=True,
         group_expand='_read_group_request_status')
 
-    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company)
 
-
-    @api.depends('approver_ids.status')
+    @api.depends('approver_ids.status', 'approver_ids.required')
     def _compute_request_status(self):
         for request in self:
             status_lst = request.mapped('approver_ids.status')
+            required_statuses = request.approver_ids.filtered('required').mapped('status')
+            required_approved = required_statuses.count('approved') == len(required_statuses)
             minimal_approver = request.approval_minimum if len(status_lst) >= request.approval_minimum else len(status_lst)
             if status_lst:
                 if status_lst.count('cancel'):
                     status = 'cancel'
                 elif status_lst.count('refused'):
                     status = 'refused'
-                elif status_lst.count('pending'):
-                    status = 'pending'
                 elif status_lst.count('new'):
                     status = 'new'
-                elif status_lst.count('approved') >= minimal_approver:
+                elif status_lst.count('approved') >= minimal_approver and required_approved:
                     status = 'approved'
                 else:
                     status = 'pending'
@@ -82,11 +82,22 @@ class ApprovalRequest(models.Model):
 
 
     def action_confirm(self):
+        self.ensure_one()
+        if self.category_id.manager_approval == 'required':
+            employee = self.env['hr.employee'].search([('user_id', '=', self.request_owner_id.id)], limit=1)
+            if not employee.parent_id:
+                raise UserError(
+                    _('This request needs to be approved by your manager. There is no manager linked to your employee profile.'))
+            if not employee.parent_id.user_id:
+                raise UserError(
+                    _('This request needs to be approved by your manager. There is no user linked to your manager.'))
+            if not self.approver_ids.filtered(lambda a: a.user_id.id == employee.parent_id.user_id.id):
+                raise UserError(
+                    _('This request needs to be approved by your manager. Your manager is not in the approvers list.'))
         if len(self.approver_ids) < self.approval_minimum:
-            raise UserError(_("You have to add at least %s approvers to confirm your request.") % self.approval_minimum)
+            raise UserError(_("You have to add at least %s approvers to confirm your request.", self.approval_minimum))
         if self.requirer_document == 'required' and not self.attachment_number:
             raise UserError(_("You have to attach at lease one document."))
-
         if self.get_approver():
             self.request_approval(self.get_approver())
             self.write({'date_confirmed': fields.Datetime.now()})
