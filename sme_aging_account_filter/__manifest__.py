@@ -19,5 +19,5 @@
     'data': [
          'views/search_template_view.xml',
     ],
-
+    'license': 'LGPL-3',
 }
