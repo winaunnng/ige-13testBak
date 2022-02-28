@@ -17,7 +17,7 @@
     'depends': ['hr','hr_payroll','hr_recruitment'],
 
     'data': [
-        'report/hr_report.xml',
+       #  'report/hr_report.xml',
         'views/hr_employee_view.xml',
         'views/hr_recruitment_view.xml',
         'security/ir.model.access.csv',
