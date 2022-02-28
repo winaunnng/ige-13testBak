@@ -33,6 +33,7 @@
                                             attrs="{'invisible': [('lock', '=',True)]}"
                                             />
                                         <button
+                                            title="Lock"
                                             icon="fa-lock"
                                             width="0.5"
                                             role="img"

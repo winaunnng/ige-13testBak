@@ -56,6 +56,7 @@ class HrEmployeePrivate(models.Model):
     def _compute_coming_birthday(self):
         for record in self:
             if record.birthday:
+                print("hiiiiiiiiiiiiiiiiiiii.....")
                 age = relativedelta(fields.Date.today(), record.birthday).years
                 coming_birthday = record.birthday + relativedelta(years=age+1)
                 record.coming_birthday = coming_birthday
@@ -75,6 +76,7 @@ class HrEmployeePublic(models.Model):
 
     warning_expired_date = fields.Date('Warning Expired Date')
     has_warning = fields.Boolean('Has Warning', default=False)
+    coming_birthday = fields.Date('Coming Birthday')
 
 class Contract(models.Model):
     _inherit = 'hr.contract'
