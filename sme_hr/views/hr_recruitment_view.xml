@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="hr_recruitment_stage_form">
+             <field name="name">hr.recruitment.stage.form.inherit</field>
+             <field name="model">hr.recruitment.stage</field>
+             <field name="inherit_id" ref="hr_recruitment.hr_recruitment_stage_form"/>
+             <field name="arch" type="xml">
+                  <xpath expr="//field[@name='job_ids']" position="before">
+                         <field name="is_offer_stage"/>
+                 </xpath>
+            </field>
+        </record>
+
+       <record model="ir.ui.view" id="hr_applicant_view_form_inherit">
+           <field name="name">Jobs - Recruitment Form Inherit</field>
+           <field name="model">hr.applicant</field>
+           <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+             <field name="arch" type="xml">
+                 <button name="create_employee_from_applicant" position="after">
+                     <field name="is_offer_stage" invisible="1"/>
+                     <button string="Send Offer Letter Email" name="action_offer_email_send" type="object" attrs="{'invisible': [('is_offer_stage', '=', False)]}"/>
+                 </button>
+            </field>
+        </record>
+
+    </data>
+</odoo>

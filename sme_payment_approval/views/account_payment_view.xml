@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <data>
+         <record id="view_account_payment_form_approval_inherit" model="ir.ui.view">
+            <field name="name">account.payment.form.approval.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+                 <field name="state" position="replace">
+                      <field name="state" widget="statusbar" statusbar_visible="draft,posted,reconciled,cancelled"/>
+                 </field>
+                  <field name="company_id" position="after">
+                    <field name="user_status" invisible="1"/>
+                    <field name="vendor_payment_individual_approval" invisible="1"/>
+                  </field>
+                 <button name="action_post" position="replace">
+                       <field name="payment_type" invisible="1"/>
+                        <button name="action_submit"  string="Submit" type="object"
+                                class="oe_highlight"  attrs="{'invisible': ['|','|',('payment_type', '=','inbound'),('state', '!=','draft'),('vendor_payment_individual_approval','=',False)]}"/>
+                       <button name="action_post" string="Confirm" type="object" class="oe_highlight"
+                                attrs="{'invisible': ['|',('state', '!=','draft'),'&amp;',('payment_type', '!=','inbound'),('vendor_payment_individual_approval','=',True)]}"
+                                data-hotkey="v"/>
+                       <button name="action_post" string="Post" type="object" class="oe_highlight"
+                                states="approve" data-hotkey="v"/>
+                      <button name="button_approve" type="object"  string="Approve"
+                             class="oe_highlight" attrs="{'invisible':[('user_status','!=','submit')]}"/>
+                      <button name="%(sme_payment_approval.payment_refuse_wizard_action)d"  type="action" string="Refuse"
+                             class="oe_highlight" attrs="{'invisible':[('user_status','!=','submit')]}"/>
+                 </button>
+                 <button name="action_cancel" position="replace">
+                     <button name="action_cancel" states="draft,submit,approve" string="Cancel" type="object" data-hotkey="z"/>
+                 </button>
+
+                 <field name="partner_id"  position="attributes">
+                       <attribute name="attrs"> {'readonly':[('state', 'not in',('draft','submit'))],
+                                             'invisible':['|', ('partner_type','!=','customer'), ('is_internal_transfer', '=', True)]} </attribute>
+                 </field>
+                <field name="amount" position="attributes">
+                    <attribute name="attrs"> {'readonly': [('state', 'not in', ('draft','submit'))]} </attribute>
+                </field>
+
+                 <field name="date" position="attributes">
+                    <attribute name="attrs"> {'readonly': [('state', 'not in', ('draft','submit'))]} </attribute>
+                </field>
+
+                 <field name="journal_id" position="attributes">
+                     <attribute name="attrs"> {'readonly': [('state', 'not in', ('draft','submit'))]} </attribute>
+                </field>
+                <field name="currency_id" position="attributes">
+                     <attribute name="attrs"> {'readonly': [('state', 'not in', ('draft','submit'))]} </attribute>
+                </field>
+
+                <xpath expr="//sheet" position="inside">
+                    <separator string="Approver(s)" invisible="context.get('active_model') == 'account.move'" attrs="{'invisible': ['|',('payment_type', '=','inbound'),('vendor_payment_individual_approval','!=',True)]}"/>
+                    <field name="approver_ids"   attrs="{'readonly': [('state', 'not in',('draft','submit'))],'invisible': ['|',('payment_type', '=','inbound'),('vendor_payment_individual_approval','!=',True)]}"
+                           invisible="context.get('active_model') == 'account.move'" mode="tree,kanban"  >
+                        <tree editable="bottom" decoration-success="status=='approve'" decoration-warning="status=='submit'" decoration-danger="status=='cancelled'">
+                            <field name="user_id" string="Approver" attrs="{'readonly':[('status','!=','draft')]}"/>
+                            <field name="status"/>
+                            <button name="action_create_activity" type="object"
+                                    icon="fa-paper-plane"
+                                    width="0.1"
+                                    role="img" title="Submit Approval"
+                                    attrs="{'invisible': [('status', 'not in', ('draft','sent'))]}"
+                                    />
+                        </tree>
+                        <kanban class="o_kanban_mobile">
+                            <field name="user_id"/>
+                            <field name="status"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_card oe_kanban_global_click">
+                                        <div class="o_kanban_content">
+                                            <t t-esc="record.user_id.value"/>
+                                            <t t-if="record.status.raw_value">
+                                                <t t-set="classname" t-value="{'approved': 'badge-success', 'pending': 'badge-warning', 'cancel': 'badge-danger'}[record.status.raw_value] || 'badge-light'"/>
+                                                <span t-esc="record.status.raw_value" t-attf-class="float-right badge-pill {{ classname }}"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form>
+                            <group>
+                                <field name="user_id"/>
+                            </group>
+                        </form>
+                    </field>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_account_payment_search_approval_inherit" model="ir.ui.view">
+            <field name="name">account.payment.search.approval.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_search"/>
+            <field name="arch" type="xml">
+                  <field name="journal_id" position="after">
+                        <field name="move_id" string="Moves" filter_domain="[('move_id.line_ids.name', 'ilike', self)]"/>
+                  </field>
+                 <filter  name="state_draft" position="after">
+                     <filter string="To Approve" name="state_to_approve" domain="[('state', '=', 'submit')]"/>
+                     <filter string="Approved" name="state_approve" domain="[('state', '=', 'approve')]"/>
+                 </filter>
+            </field>
+        </record>
+
+        <record id="account_accountant.menu_accounting" model="ir.ui.menu">
+            <field name="groups_id" eval="[(4,ref('sme_payment_approval.group_account_admin'))]"/>
+        </record>
+
+        <record id="view_account_payment_tree_amount_inherit" model="ir.ui.view">
+            <field name="name">account.payment.tree.amount.inherit</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_tree"/>
+            <field name="arch" type="xml">
+                <field name="amount_signed" position="after">
+                       <field name="amount" sum="Amount"/>
+                </field>
+                <field name="amount_company_currency_signed" position="attributes">
+                    <attribute name="optional"> hide </attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+     <record id="email_template_data_applicant_offer_letter" model="mail.template">
+        <field name="name">Applicant: Offer Letter</field>
+        <field name="model_id" ref="hr_recruitment.model_hr_applicant"/>
+        <field name="subject">Offer Letter : ${object.job_id.name | safe}</field>
+        <field name="email_to">${(not object.partner_id and object.email_from or '') | safe}</field>
+        <field name="partner_to">${object.partner_id.id or ''}</field>
+        <field name="body_html" type="html">
+<table border="0" cellpadding="0" cellspacing="0" width="800" style="background-color: white; border-collapse: collapse; margin-left: 20px;">
+    <tr>
+        <td valign="top" style="padding: 0px 10px;">
+
+            <div style="text-align: center">
+                <h2>Congratulations!</h2>
+                <img src="/hr_recruitment/static/src/img/congratulations.png" alt="Congratulations!" style="width:175px;margin:20px 0;"/>
+            </div>
+            <div style="font-size: 13px; margin: 0px; padding: 0px;">
+             Dear <b> ${object.partner_name} </b> ,
+            <br/><br/>
+             <p> We are pleased to confirm that you have been selected for the position of <b> ${object.job_id.name} </b> , <b> ${object.job_id.address_id.name } </b> and we believe that your skills and
+            knowledge will be valuable assets to our team. We would like you to start your first day of work on <b> ${object.availability} </b>.  </p>
+                <br/>
+            <p> The benefits information and condition of your employment are as per attached (Appendix A). </p>
+             <br/>
+             <p>  You are required to bring the original copies of the necessary documents when you report to
+            work on your first day.  </p>
+            <br/>
+            <p> We believe that you would find this new opportunity both challenging and rewarding.
+            Please sign the endorsed copy of the letter and return it to us to indicate your acceptance of
+            this offer.  </p>
+            <br/>
+             <p>  We look forward to welcoming you on board to be part of our team.  </p>
+                <br/><br/>
+
+                % if object.user_id:
+                   With Best Regards,
+                    <table>
+                        <tr>
+                            <td width="75">
+                                <img src="/web/image/res.users/${object.user_id.id}/image_128" alt="Avatar" style="vertical-align:baseline; width: 64px; height: 64px; object-fit: cover;" />
+                            </td>
+                            <td>
+                                <strong>${object.user_id.name}</strong><br/>
+                                <span>Email: ${object.user_id.email or ''}</span><br/>
+                                <span>Phone: ${object.user_id.phone or ''}</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/><br/>
+                % endif
+
+
+            </div>
+        </td>
+    </tr>
+</table></field>
+        <field name="user_signature" eval="False"/>
+        <field name="auto_delete" eval="True"/>
+        <field name="lang">${object.partner_id.lang or ''}</field>
+    </record>
+     </data>
+</odoo>

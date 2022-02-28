@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="hr_employee_view_form" model="ir.ui.view">
+        <field name="name">hr.employee.view.form</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form" />
+        <field name="arch" type="xml">
+            <field name="birthday" position="replace">
+                <label for="birthday"/>
+                <div>
+                     <field name="birthday" class="oe_inline" style="vertical-align:baseline"/>
+                    -  <span class="font-weight-bold" > <field name="age"/>  Years </span>
+                </div>
+            </field>
+
+            <field name="place_of_birth" position="after">
+                 <field name="coming_birthday" />
+            </field>
+            <page name="hr_settings" position="after">
+                <page name="hr_warnings" string="Warnings">
+
+                        <group>
+                              <field mode="tree" nolabel="1" name="warning_line_ids">
+                                    <tree  editable="bottom">
+                                        <field name="type" attrs="{'readonly': [('lock', '=',True)]}"/>
+                                        <field name="date" attrs="{'readonly': [('lock', '=',True)]}"/>
+                                        <field name="description" attrs="{'readonly': [('lock', '=',True)]}"/>
+                                         <field name="lock" invisible="1" />
+                                        <button name="action_lock" type="object"
+                                            icon="fa-unlock" string="Lock"
+                                            width="0.5"
+                                            role="img" title="LOCK"
+                                            attrs="{'invisible': [('lock', '=',True)]}"
+                                            />
+                                        <button
+                                            icon="fa-lock"
+                                            width="0.5"
+                                            role="img"
+                                            attrs="{'invisible': [('lock', '=',False)]}"
+                                            />
+                                    </tree>
+                              </field>
+                        </group>
+
+
+                     <group>
+                              <field name="has_warning" invisible="1"/>
+                            <div attrs="{'invisible': [('has_warning', '=', False)]}">
+                                 <span> Previous warnings have been deleted on  <field name="warning_expired_date"  readonly="1"  nolabel="1"/> .  </span>
+                            </div>
+                        </group>
+                 </page>
+            </page>
+        </field>
+    </record>
+
+       <record id="hr_contract_view_form_inherit" model="ir.ui.view">
+            <field name="name">hr.contract.form.inherit</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form" />
+           <field name="arch" type="xml">
+                 <field name="job_id" position="after">
+                     <label for="employment_loyalty"/>
+                        <div>
+                            <field name="employment_loyalty" class="oe_inline" style="vertical-align:baseline"/>
+                            <span class="font-weight-bold" >  ( <field name="service_period" readonly="1"/> ) </span>
+                        </div>
+                        <field name="loyalty_range" class="oe_inline" />
+                 </field>
+           </field>
+       </record>
+</odoo>
