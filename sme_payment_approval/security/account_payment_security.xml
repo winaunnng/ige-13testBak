@@ -59,7 +59,7 @@
             <field name="domain_force">[('move_id.type', 'in', ('in_invoice', 'in_refund', 'in_receipt','entry'))]</field>
         </record>
     </data>
-    <data noupdate="1">
-          <delete model="ir.rule" id="purchase.purchase_user_account_move_rule"/>
-   </data>
+<!--    <data noupdate="1">-->
+<!--          <delete model="ir.rule" id="purchase.purchase_user_account_move_rule"/>-->
+<!--   </data>-->
 </odoo>

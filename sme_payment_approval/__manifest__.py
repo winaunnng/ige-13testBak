@@ -24,5 +24,5 @@
         'data/mail_activity_data.xml',
         'views/res_config_settings_view.xml'
     ],
-
+    'license': 'LGPL-3',
 }

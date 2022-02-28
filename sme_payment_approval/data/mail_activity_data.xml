@@ -5,7 +5,7 @@
             <field name="name">Advance Payment Approval</field>
             <field name="icon">fa-check-circle</field>
             <field name="sequence">4</field>
-            <field name="res_model_id" ref="account.model_account_payment"/>
+            <field name="res_model">account.payment</field>
         </record>
          <template id="payment_template_refuse_reason">
             <p>Your payment <t t-esc="name"/> <span t-if="ref"> (Ref- <t t-esc="ref"/>)</span> has been refused</p>
@@ -13,8 +13,5 @@
                 <li>Reason : <t t-esc="reason"/></li>
             </ul>
         </template>
-<!--        <template id="payment_template_approve">-->
-<!--            <p>Your payment <t t-esc="name"/> <span t-if="ref"> (Ref- <t t-esc="ref"/>)</span> has been approved</p>-->
-<!--        </template>-->
     </data>
 </odoo>
