@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-         <record id="hr_expense_view_form_inherit" model="ir.ui.view">
-            <field name="name">hr.expense.view.form.inherit</field>
-            <field name="model">hr.expense</field>
-            <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
-            <field name="arch" type="xml">
-                <field name="employee_id" position="attributes">
-<!--                    <field name="employee_id" groups="hr_expense.group_hr_expense_team_approver" context="{'default_company_id': company_id}"/>-->
+<!--         <record id="hr_expense_view_form_inherit" model="ir.ui.view">-->
+<!--            <field name="name">hr.expense.view.form.inherit</field>-->
+<!--            <field name="model">hr.expense</field>-->
+<!--            <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <field name="employee_id" position="attributes">-->
+<!--&lt;!&ndash;                    <field name="employee_id" groups="hr_expense.group_hr_expense_team_approver" context="{'default_company_id': company_id}"/>&ndash;&gt;-->
 
-                    <attribute name="groups">hr_expense.group_hr_expense_team_approver,sme_expense_approval.group_hr_expense_request_user</attribute>
-                </field>
-            </field>
-       </record>
+<!--                    <attribute name="groups">hr_expense.group_hr_expense_team_approver,sme_expense_approval.group_hr_expense_request_user</attribute>-->
+<!--                </field>-->
+<!--            </field>-->
+<!--       </record>-->
 
        <record id="view_hr_expense_sheet_form_inherit" model="ir.ui.view">
             <field name="name">hr.expense.sheet.form.inherit</field>
@@ -48,11 +48,11 @@
                  <button name="reset_expense_sheets" position="attributes">
                      <attribute name="attrs">{'invisible': ['|', ('can_reset', '=', False), ('state', '!=', 'submit')]}</attribute>
                  </button>
-                 <xpath expr="//page[@name='other_info']" position="before">
-                     <page string="Approver(s)" name="expense_approvers"  attrs="{'invisible': [('expense_individual_approval','!=',True)]}">
-                            <field name="approver_ids" mode="tree,kanban"   attrs="{'readonly': [('state', 'not in',('draft','submit'))]}">
+                 <xpath expr="//page[@name='other_info']" position="before" >
+                    <page string="Approver(s)" name="approvers"  attrs="{'invisible': [('expense_individual_approval','!=',True)]}">
+                        <field name="approver_ids" mode="tree,mode"  attrs="{'readonly': [('state', 'not in',('draft','submit'))]}">
                                 <tree editable="bottom" decoration-success="status=='approve'" decoration-warning="status=='submit'" decoration-danger="status=='cancel'">
-                                    <field name="user_id" string="Approver" attrs="{'readonly':[('status','!=','draft')]}"/>
+                                    <field name="user_id" string="Approver" />
                                     <field name="status"/>
                                     <button name="action_create_activity" type="object"
                                             icon="fa-paper-plane"
@@ -70,7 +70,7 @@
                                                 <div class="o_kanban_content">
                                                     <t t-esc="record.user_id.value"/>
                                                     <t t-if="record.status.raw_value">
-                                                        <t t-set="classname" t-value="{'approved': 'badge-success', 'pending': 'badge-warning', 'cancel': 'badge-danger'}[record.status.raw_value] || 'badge-light'"/>
+                                                        <t t-set="classname" t-value="{'approved': 'badge-success', 'pending': 'badge-warning', 'refused': 'badge-danger'}[record.status.raw_value] || 'badge-light'"/>
                                                         <span t-esc="record.status.raw_value" t-attf-class="float-right badge-pill {{ classname }}"/>
                                                     </t>
                                                 </div>
@@ -80,6 +80,7 @@
                                 </kanban>
                                 <form>
                                     <group>
+
                                         <field name="user_id"/>
                                     </group>
                                 </form>
@@ -95,7 +96,7 @@
             <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_tree"/>
             <field name="arch" type="xml">
                 <field name="accounting_date" position="after">
-                      <field name="approver_ids" widget="many2many_tags" optional="show"/>
+                      <field name="approver_ids" optional="show"/>
                 </field>
             </field>
        </record>

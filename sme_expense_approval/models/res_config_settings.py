@@ -8,7 +8,7 @@ class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
     expense_individual_approval = fields.Boolean("Expense Individual Approval",related='company_id.expense_individual_approval',
-                                            default=False,readonly=False)
+                                           readonly=False)
 
 
 

@@ -9,9 +9,13 @@ class Company(models.Model):
 class HrExpense(models.Model):
     _inherit = "hr.expense"
 
+
     @api.model
     def _default_employee_id(self):
-        return self.env.user.employee_id
+        employee = self.env.user.employee_id
+        if not employee and not self.env.user.has_group('hr_expense.group_hr_expense_team_approver'):
+            raise ValidationError(_('The current user has no related employee. Please, create one.'))
+        return employee
 
     state = fields.Selection([
         ('draft', 'To Submit'),
@@ -21,20 +25,17 @@ class HrExpense(models.Model):
         ('refused', 'Refused')
     ], compute='_compute_state', string='Status', copy=False, index=True, readonly=True, store=True,
         help="Status of the expense.")
-    employee_id = fields.Many2one('hr.employee', string="Employee", required=True, readonly=True, states={'draft': [('readonly', False)], 'reported': [('readonly', False)], 'refused': [('readonly', False)]}, default=_default_employee_id, domain=lambda self: self._get_employee_id_domain(), check_company=True)
+
+    employee_id = fields.Many2one('hr.employee', compute='_compute_employee_id', string="Employee",
+        store=True, required=True, readonly=False, tracking=True,
+        states={'approved': [('readonly', True)], 'done': [('readonly', True)]},
+        default=_default_employee_id, domain=lambda self: self._get_employee_id_domain(), check_company=True)
 
 
     @api.model
     def _get_employee_id_domain(self):
-        res = [('id', '=', 0)]  # Nothing accepted by domain, by default
-
-        if self.env.user.employee_id:
-            employee = self.env.user.employee_id
-            res = [('id', '=', employee.id), '|', ('company_id', '=', False),
-                   ('company_id', '=', employee.company_id.id)]
-
-        if self.user_has_groups('hr_expense.group_hr_expense_user') or self.user_has_groups(
-                'account.group_account_user') or  self.user_has_groups('hr_expense.group_hr_expense_team_approver') or  self.user_has_groups('sme_expense_approval.group_hr_expense_request_user'):
+        res = [('id', '=', 0)] # Nothing accepted by domain, by default
+        if self.user_has_groups('hr_expense.group_hr_expense_user') or self.user_has_groups('account.group_account_user'):
             res = "['|', ('company_id', '=', False), ('company_id', '=', company_id)]"  # Then, domain accepts everything
         # elif self.user_has_groups('hr_expense.group_hr_expense_team_approver') and self.env.user.employee_ids:
         #     user = self.env.user
@@ -47,7 +48,9 @@ class HrExpense(models.Model):
         #         ('expense_manager_id', '=', user.id),
         #         '|', ('company_id', '=', False), ('company_id', '=', employee.company_id.id),
         #     ]
-
+        elif self.env.user.employee_id:
+            employee = self.env.user.employee_id
+            res = [('id', '=', employee.id), '|', ('company_id', '=', False), ('company_id', '=', employee.company_id.id)]
         return res
 
     def read(self, fields):

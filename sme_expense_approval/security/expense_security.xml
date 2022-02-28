@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-         <record id="group_hr_expense_request_user" model="res.groups">
+         <record model="res.groups" id="group_hr_expense_request_user" >
             <field name="name">Request User</field>
-            <field name="category_id" ref="base.module_category_accounting_expenses"/>
+            <field name="category_id" ref="base.module_category_human_resources_expenses"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-         <record id="hr_expense.group_hr_expense_team_approver" model="res.groups">
+        <record id="hr_expense.group_hr_expense_team_approver" model="res.groups">
                 <field name="implied_ids" eval="[(4, ref('group_hr_expense_request_user'))]"/>
-                <field name="category_id" ref="base.module_category_accounting_expenses"/>
-       </record>
+                <field name="category_id" ref="base.module_category_human_resources_expenses"/>
+        </record>
 
 
-          <record id="ir_rule_hr_expense_own_expense" model="ir.rule">
+        <record id="ir_rule_hr_expense_own_expense" model="ir.rule">
             <field name="name">User Own Expense</field>
             <field name="model_id" ref="hr_expense.model_hr_expense"/>
             <field name="domain_force">[('create_uid', '=', user.id)]</field>
