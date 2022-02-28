@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="res.groups" id="group_hr_expense_request_user" >
+            <field name="name">Request User</field>
+            <field name="category_id" ref="base.module_category_human_resources_expenses"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="hr_expense.group_hr_expense_team_approver" model="res.groups">
+                <field name="implied_ids" eval="[(4, ref('group_hr_expense_request_user'))]"/>
+                <field name="category_id" ref="base.module_category_human_resources_expenses"/>
+        </record>
+
+
+        <record id="ir_rule_hr_expense_own_expense" model="ir.rule">
+            <field name="name">User Own Expense</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="ir_rule_hr_expense_sheet_own_expense" model="ir.rule">
+            <field name="name">User Own Expense Sheet</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense_sheet"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="ir_rule_hr_expense_all_approver" model="ir.rule">
+            <field name="name">All Approver Expense</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('hr_expense.group_hr_expense_user'))]"/>
+        </record>
+
+        <record id="ir_rule_hr_expense_sheet_all_approver" model="ir.rule">
+            <field name="name">All Approver Expense Sheet</field>
+            <field name="model_id" ref="hr_expense.model_hr_expense_sheet"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[
+                (4, ref('hr_expense.group_hr_expense_user'))]"/>
+        </record>
+
+        <record id="ir_rule_hr_expense_team_approver_analytic" model="ir.rule">
+            <field name="name">Team Approver Expense Restrict Analytic Account </field>
+            <field name="model_id" ref="hr_expense.model_hr_expense"/>
+            <field name="domain_force">['|',('analytic_account_id','=',False),('analytic_account_id','in', [ a.id for a in user.analytic_account_ids ])]</field>
+            <field name="groups" eval="[(4, ref('hr_expense.group_hr_expense_team_approver'))]"/>
+        </record>
+
+        <record id="ir_rule_hr_expense_sheet_team_approver_analytic" model="ir.rule">
+            <field name="name">Team Approver Sheet Restrict Analytic Account </field>
+            <field name="model_id" ref="hr_expense.model_hr_expense_sheet"/>
+            <field name="domain_force">['|',('expense_line_ids.analytic_account_id','=',False),('expense_line_ids.analytic_account_id','in',[ a.id for a in user.analytic_account_ids ])]</field>
+            <field name="groups" eval="[(4, ref('hr_expense.group_hr_expense_team_approver'))]"/>
+        </record>
+
+
+     </data>
+ </odoo>

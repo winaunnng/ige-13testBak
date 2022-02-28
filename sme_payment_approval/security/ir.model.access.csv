@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_payment_approver,access_account_payment_approver,model_account_payment_approver,group_account_admin,1,1,1,1
+access_account_payment_admin,account.payment admin,account.model_account_payment,group_account_admin,1,1,1,1
+access_account_payment_method_admin,account.payment.method.admin,account.model_account_payment_method,group_account_admin,1,1,1,1
+access_account_move_admin,account.move admin,account.model_account_move,group_account_admin,1,1,0,0
+access_account_move_line_admin,account.move.line admin,account.model_account_move_line,group_account_admin,1,1,1,0
+access_account_partial_reconcile_admin,account.partial.reconcile admin,account.model_account_partial_reconcile,group_account_admin,1,0,0,0
+access_account_account_type_admin,account.account.type admin,account.model_account_account_type,group_account_admin,1,0,0,0
+access_stock_move_admin,stock.move admin,stock.model_stock_move,group_account_admin,1,0,0,0
+access_account_payment_refuse_wizard_admin,account_payment_refuse_wizard_admin,model_payment_refuse_wizard,group_account_admin,1,1,1,1
