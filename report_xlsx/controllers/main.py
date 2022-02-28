@@ -14,7 +14,7 @@ from odoo.http import (
     serialize_exception as _serialize_exception,
 )
 from odoo.tools import html_escape
-from odoo.tools.safe_eval import safe_eval, time
+from odoo.tools.safe_eval import safe_eval
 
 from odoo.addons.web.controllers import main as report
 
@@ -87,7 +87,7 @@ class ReportController(report.ReportController):
                     obj = request.env[report.model].browse(ids)
                     if report.print_report_name and not len(obj) > 1:
                         report_name = safe_eval(
-                            report.print_report_name, {"object": obj, "time": time}
+                            report.print_report_name, {"object": obj } #"time": time
                         )
                         filename = "%s.%s" % (report_name, "xlsx")
                 response.headers.add(
