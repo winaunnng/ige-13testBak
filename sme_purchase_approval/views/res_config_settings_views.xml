@@ -15,7 +15,7 @@
                             <div class="o_setting_right_pane">
                                 <label for="po_individual_approval"/>
                                 <div class="text-muted">
-                                    Request approvers by individual to approve orders ( Customized )
+                                    Request approvers by individual to approve orders
                                 </div>
                             </div>
                         </div>

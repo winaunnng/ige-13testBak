@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError,ValidationError
 
 
 class Company(models.Model):
     _inherit = 'res.company'
 
-    po_individual_approval = fields.Boolean(string='PO Individual Approval',default=False)
-
+    po_individual_approval = fields.Boolean(string='PO Individual Approval')
 
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
@@ -39,8 +38,6 @@ class PurchaseOrder(models.Model):
         user = self.env.user
         for order in self:
             order.user_status = order.approver_ids.filtered(lambda r: r.user_id == user).status
-
-
 
     def _get_user_approval_activities(self, user):
         domain = [
@@ -82,6 +79,16 @@ class PurchaseOrder(models.Model):
                     body=_("Your Purchase Order %s has been approved") % (self.name),subject=self.name)
             # self.message_post_with_view('sme_purchase_approval.purchase_template_approve', values={'name': self.name})
             result = super(PurchaseOrder, self).button_approve(force=force)
+            try:
+                if self.requisition_id.type_id.exclusive == 'exclusive':
+                    others_po = self.requisition_id.mapped('purchase_ids').filtered(lambda r: r.id != self.id)
+                    others_po.button_cancel()
+                    if self.state not in ['draft', 'sent', 'to approve']:
+                        self.requisition_id.action_done()
+            except:
+                pass
+
+
         return result
 
 
@@ -154,4 +161,3 @@ class PurchaseApprover(models.Model):
     @api.onchange('user_id')
     def _onchange_approver_ids(self):
         return {'domain': {'user_id': [('id', 'not in', self.order_id.approver_ids.mapped('user_id').ids + self.order_id.user_id.ids)]}}
-    

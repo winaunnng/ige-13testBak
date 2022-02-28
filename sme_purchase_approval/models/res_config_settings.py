@@ -7,8 +7,7 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    po_individual_approval = fields.Boolean("Purchase Order Individual Approval",related='company_id.po_individual_approval',
-                                            default=False,readonly=False)
+    po_individual_approval = fields.Boolean(related='company_id.po_individual_approval', string='Purchase Order Approval (Customized)', readonly=False)
 
 
 
