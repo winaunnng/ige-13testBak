@@ -7,4 +7,4 @@ access_account_move_line_admin,account.move.line admin,account.model_account_mov
 access_account_partial_reconcile_admin,account.partial.reconcile admin,account.model_account_partial_reconcile,group_account_admin,1,0,0,0
 access_account_account_type_admin,account.account.type admin,account.model_account_account_type,group_account_admin,1,0,0,0
 access_stock_move_admin,stock.move admin,stock.model_stock_move,group_account_admin,1,0,0,0
-access_mrp_bom_admin,mrp.bom admin,mrp.model_mrp_bom,group_account_admin,1,0,0,0
+access_account_payment_refuse_wizard_admin,account_payment_refuse_wizard_admin,model_payment_refuse_wizard,group_account_admin,1,1,1,1

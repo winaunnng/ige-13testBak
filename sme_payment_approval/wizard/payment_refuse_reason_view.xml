@@ -4,8 +4,7 @@
         <field name="name">payment.refuse.wizard.form</field>
         <field name="model">payment.refuse.wizard</field>
         <field name="arch" type="xml">
-            <form string="Payment refuse reason">
-                <separator string="Reason to refuse Payment"/>
+            <form string="Payment refuse reason">s
                 <field name="payment_id" invisible="1"/>
                 <field name="reason"/>
                 <footer>
@@ -17,7 +16,7 @@
     </record>
 
     <record id="payment_refuse_wizard_action" model="ir.actions.act_window">
-        <field name="name">Refuse Payment </field>
+        <field name="name">Reason to refuse Payment </field>
         <field name="res_model">payment.refuse.wizard</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="payment_refuse_wizard_view_form"/>
