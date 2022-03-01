@@ -80,39 +80,33 @@ class HrJobReport(models.AbstractModel):
                 sheet.write(data_row, data_col, applicant_count, format5)
                 data_col+=1
 
-            sheet.write(data_row, data_col, job.x_studio_offer_acceptance_date, format5)  # Offer Acceptance Date
-            sheet.write(data_row, data_col+1, 1 if job.x_studio_offer_rejected else 0, format5)  # No of Offer Rejected Person (If have)
-            sheet.write(data_row, data_col+2, job.x_studio_hired_applicant.source_id.name or '', format5)  # Source of Hired
-            sheet.write(data_row, data_col+3, job.x_studio_recruitment_external_cost or '', format5)  # Recruitment External Cost
-            sheet.write(data_row, data_col+4, job.x_studio_recruitment_internal_cost or '', format5)  # Recruitment Internal Cost
-            sheet.write(data_row, data_col+5, job.x_studio_total_recruitment_cost or '', format5)  # Recruitment Total Cost
-            sheet.write(data_row, data_col+6, job.x_studio_hired_applicant.name or '', format5)  # Hired Applicant Name
-            sheet.write(data_row, data_col+7, job.x_studio_hired_applicant.x_studio_gender, format5)  # Hired Applicant Name
-            sheet.write(data_row, data_col+8, job.x_studio_hired_applicant.x_studio_join_date, format5)  # Join Date
+            # sheet.write(data_row, data_col, job.x_studio_offer_acceptance_date, format5)  # Offer Acceptance Date
+            # sheet.write(data_row, data_col+1, 1 if job.x_studio_offer_rejected else 0, format5)  # No of Offer Rejected Person (If have)
+            # sheet.write(data_row, data_col+2, job.x_studio_hired_applicant.source_id.name or '', format5)  # Source of Hired
+            # sheet.write(data_row, data_col+3, job.x_studio_recruitment_external_cost or '', format5)  # Recruitment External Cost
+            # sheet.write(data_row, data_col+4, job.x_studio_recruitment_internal_cost or '', format5)  # Recruitment Internal Cost
+            # sheet.write(data_row, data_col+5, job.x_studio_total_recruitment_cost or '', format5)  # Recruitment Total Cost
+            # sheet.write(data_row, data_col+6, job.x_studio_hired_applicant.name or '', format5)  # Hired Applicant Name
+            # sheet.write(data_row, data_col+7, job.x_studio_hired_applicant.x_studio_gender, format5)  # Hired Applicant Name
+            # sheet.write(data_row, data_col+8, job.x_studio_hired_applicant.x_studio_join_date, format5)  # Join Date
             # sheet.write(data_row, data_col+9, job.x_studio_hired_applicant.attrition_date_within_3_months_or_1_years, format5)  # attrition_date_within_3_months_or_1_years
-            sheet.write(data_row, data_col+10, job.x_studio_remark, format5)  # Remark
-            sheet.write(data_row, data_col+11, job.x_studio_time_to_hire_days, format5)  # Time to Hire (Days)
-            sheet.write(data_row, data_col+12, job.x_studio_time_to_fill_days, format5)  # Time to Fill (Days)
-            sheet.write(data_row, data_col+13, job.x_studio_time_to_fill_alert, format5)  # Time to Fill ALert (Days)
-            sheet.write(data_row, data_col+14, job.x_studio_type_of_attrition, format5)  # Type of Attrition'
-            sheet.write(data_row, data_col+15, 1 if job.x_studio_hired_applicant.x_studio_gender == 'Female' else 0, format5)  # Female Count
-            sheet.write(data_row, data_col+16, 1 if job.x_studio_hired_applicant.x_studio_gender=='Male' else 0, format5)  # Female Count
-            sheet.write(data_row, data_col+17, job.x_studio_remark, format5)  # Close Position
-            sheet.write(data_row, data_col+18, 0 if job.x_studio_type_of_recruitment=='Replacement' else 1, format5)  # New Requirement Count
-            sheet.write(data_row, data_col+19, 1 if job.x_studio_type_of_recruitment=='Replacement' else 0, format5)  # Replacement Count
-            sheet.write(data_row, data_col+10, '', format5)  # Within 45 days count
-            sheet.write(data_row, data_col + 11, '', format5)  # Over 45 days count
-            sheet.write(data_row, data_col + 12, '', format5)  # No of Offer accepted Person
-            sheet.write(data_row, data_col + 13, '', format5)  # Total No of Offered Person
-            sheet.write(data_row, data_col + 14, '', format5)  # Level of Management
-            sheet.write(data_row, data_col + 15, '', format5)  # Time to Hire for Above Senior Management
-            sheet.write(data_row, data_col + 16, '', format5)  # Time to fill for Above Senior Management
-            sheet.write(data_row, data_col + 17, '',
-                        format5)  # Time to Hire for Below Senior Management
-            sheet.write(data_row, data_col + 18, '',
-                        format5)  # Time to fill for Below Senior Management
-            sheet.write(data_row, data_col + 19, '',
-                        format5)  # Attrition Month Calculation
+            # sheet.write(data_row, data_col+10, job.x_studio_remark, format5)  # Remark
+            # sheet.write(data_row, data_col+11, job.x_studio_time_to_hire_days, format5)  # Time to Hire (Days)
+            # sheet.write(data_row, data_col+12, job.x_studio_time_to_fill_days, format5)  # Time to Fill (Days)
+            # sheet.write(data_row, data_col+13, job.x_studio_time_to_fill_alert, format5)  # Time to Fill ALert (Days)
+            # sheet.write(data_row, data_col+14, job.x_studio_type_of_attrition, format5)  # Type of Attrition'
+            # sheet.write(data_row, data_col+15, 1 if job.x_studio_hired_applicant.x_studio_gender == 'Female' else 0, format5)  # Female Count
+            # sheet.write(data_row, data_col+16, 1 if job.x_studio_hired_applicant.x_studio_gender=='Male' else 0, format5)  # Female Count
+            # sheet.write(data_row, data_col+17, job.x_studio_remark, format5)  # Close Position
+            # sheet.write(data_row, data_col+18, 0 if job.x_studio_type_of_recruitment=='Replacement' else 1, format5)  # New Requirement Count
+            # sheet.write(data_row, data_col+19, 1 if job.x_studio_type_of_recruitment=='Replacement' else 0, format5)  # Replacement Count
+            #
+            # sheet.write(data_row, data_col+10, job.x_studio_remark, format5)  # Within 45 days count
+
+
+
+
+
             data_row +=1
             srno+=1
 

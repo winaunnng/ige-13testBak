@@ -29,8 +29,9 @@ class Applicant(models.Model):
                                default=_default_stage_id)
     is_offer_stage = fields.Boolean(related='stage_id.is_offer_stage',string="Is Offer Stage?")
 
-    def _find_mail_template(self):
-        return  self.env['ir.model.data'].xmlid_to_res_id('sme_hr.email_template_data_applicant_offer_letter', raise_if_not_found=False)
+    def _find_mail_template(self,force_confirmation_template=False):
+        return self.env['ir.model.data']._xmlid_to_res_id('sme_hr.email_template_data_applicant_offer_letter',
+                                                                 raise_if_not_found=False)
 
     def action_offer_email_send(self):
         ''' Opens a wizard to compose an email, with relevant mail template loaded by default '''
@@ -39,7 +40,7 @@ class Applicant(models.Model):
         lang = self.env.context.get('lang')
         template = self.env['mail.template'].browse(template_id)
         if template.lang:
-            lang = template._render_template(template.lang, 'hr.applicant', self.ids[0])
+            lang = template._render_lang(self.ids)[self.id]
         ctx = {
             'default_model': 'hr.applicant',
             'default_res_id': self.ids[0],

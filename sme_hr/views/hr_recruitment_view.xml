@@ -25,27 +25,5 @@
             </field>
         </record>
 
-     <record id="view_hr_job_form_ige_inherit" model="ir.ui.view">
-        <field name="name">hr.job.form.ige.inherit</field>
-        <field name="model">hr.job</field>
-        <field name="inherit_id" ref="hr.view_hr_job_form"/>
-        <field name="arch" type="xml">
-             <xpath expr="//form/sheet/div[3]" position="before">
-                    <group string="Other Info">
-                        <group name="recruitment">
-                             <field name="applicant_id" />
-                             <span >
-                                <button string="Reset Applicant" type="object"
-                                name="action_reset_applicant"
-                                attrs="{'invisible':[('applicant_id', '=', False)]}"
-                                class="oe_link pt-0 oe_inline"/>
-                                </span>
-                        </group>
-
-                    </group>
-             </xpath>
-        </field>
-     </record>
-
     </data>
 </odoo>
