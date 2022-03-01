@@ -2,7 +2,7 @@
 <odoo>
 <data>
     <template id="search_template_accounts">
-        <a type="button" class="dropdown-toggle" data-toggle="dropdown">
+        <button type="button" class="o-no-caret btn btn-secondary dropdown-toggle" data-toggle="dropdown">
             <span class="fa fa-book"/>
             Accounts:
             <t t-set="selected_accounts" t-value="options.get('name_account_group') or ', '.join(account.get('code') for account in options['accounts'] if account.get('selected'))"/>
@@ -12,7 +12,7 @@
             <t t-else="">
                 All
             </t>
-        </a>
+        </button>
         <div class="dropdown-menu o_filters_menu" role="menu">
             <t t-foreach="options['accounts']" t-as="a">
                 <t t-if="a.get('id') == 'divider'">
@@ -21,51 +21,60 @@
                     <div role="separator" class="dropdown-divider"/>
                 </t>
                 <t t-if="a.get('id') != 'divider'">
-<!--                    <t t-if="a.get('id') == 'group'">-->
-<!--                        <a role="menuitem" class="dropdown-item js_account_report_group_choice_filter" data-filter="accounts" t-att-data-id="a.get('id')" t-att-data-member-ids="a.get('ids')">-->
-<!--                            <t t-esc="a.get('name')"/>-->
-<!--                        </a>-->
-<!--                    </t>-->
-<!--                    <t t-else="">-->
-                        <a role="menuitem" class="dropdown-item js_account_report_choice_filter" t-att-title="a.get('name')+ '-' + a.get('code')" t-att-data-id="a.get('id')" data-filter="accounts">
-                            <t t-esc="a.get('name')"/>
-                        </a>
-<!--                    </t>-->
+                    <a role="menuitem" class="dropdown-item js_account_report_choice_filter" t-att-title="a.get('name')+ '-' + a.get('code')" t-att-data-id="a.get('id')" data-filter="accounts">
+                        <t t-esc="a.get('name')"/>
+                    </a>
                 </t>
             </t>
         </div>
     </template>
-    <template id="search_template_aging">
-        <div class="btn-group o_dropdown o_account_reports_filter_date" t-if="options.get('date') != None">
+
+    <template id="search_template">
+        <div class="btn-group dropdown o_account_reports_filter_date" t-if="options.get('date') != None">
             <t t-call="account_reports.search_template_date_filter"/>
         </div>
-        <div class="btn-group o_dropdown o_account_reports_filter_date_cmp" t-if="options.get('comparison') != None">
+        <div class="btn-group dropdown o_account_reports_filter_date_cmp" t-if="options.get('comparison') != None">
             <t t-call="account_reports.search_template_comparison"/>
         </div>
-        <div class="btn-group o_dropdown o_account_reports_filter_journals" t-if="options.get('journals') != None">
+        <div class="btn-group dropdown o_account_reports_filter_journals" t-if="options.get('journals') != None">
             <t t-call="account_reports.search_template_journals"/>
         </div>
-        <div class="btn-group o_dropdown o_account_reports_filter_account_type" t-if="options.get('account_type') != None">
+        <div class="btn-group dropdown o_account_reports_filter_account_type" t-if="options.get('account_type') != None">
             <t t-call="account_reports.search_template_account_type"/>
         </div>
-        <div class="btn-group o_dropdown o_account_reports_filter_analytic" t-if="options.get('analytic') != None or options.get('analytic_tags') != None">
+        <div class="btn-group dropdown o_account_reports_filter_analytic" t-if="options.get('analytic') != None or options.get('analytic_tags') != None">
             <t t-call="account_reports.search_template_analytic"/>
         </div>
-        <div class="btn-group o_dropdown o_account_reports_filter_ir_filters" t-if="options.get('ir_filters') != None">
+        <div class="btn-group dropdown o_account_reports_filter_ir_filters" t-if="options.get('ir_filters') != None">
             <t t-call="account_reports.search_template_ir_filters"/>
         </div>
-        <div class="btn-group o_dropdown o_account_reports_filter_partner" t-if="options.get('partner')">
+        <div class="btn-group dropdown o_account_reports_filter_groupby_fields" t-if="options.get('groupby_fields')">
+            <t t-call="account_reports.search_template_groupby_fields"/>
+        </div>
+        <div class="btn-group dropdown o_account_reports_filter_partner" t-if="options.get('partner')">
             <t t-call="account_reports.search_template_partner"/>
         </div>
         <div class="btn-group o_dropdown o_account_reports_filter_accounts" t-if="options.get('accounts') != None">
                 <t t-call="sme_aging_account_filter.search_template_accounts"/>
         </div>
-        <div id="extra_options_dropdown" class="btn-group o_dropdown o_account_reports_filter_bool" t-if="options.get('cash_basis') != None or options.get('all_entries') != None or options.get('unfold_all') != None">
+        <div class="btn-group dropdown o_account_reports_filter_currency" t-if="options.get('currency_rates')">
+            <t t-call="account_reports.search_template_currency"/>
+        </div>
+        <div id="extra_options_dropdown" class="btn-group dropdown o_account_reports_filter_bool" t-if="options.get('cash_basis') != None or options.get('all_entries') != None or options.get('unfold_all') != None">
             <t t-call="account_reports.search_template_extra_options"/>
         </div>
+        <div class="btn-group dropdown o_account_reports_filter_ec_sale_code"
+                t-if="options.get('ec_sale_code') != None">
+            <t t-call="account_reports.search_template_ec_sale_code"/>
+        </div>
+        <div id="fiscal_position_choice_option" class="btn-group dropdown o_account_reports_filter_fiscal_position"
+            t-if="len(options['available_vat_fiscal_positions']) > (0 if options['allow_domestic'] else 1)">
+            <t t-call="account_reports.search_template_fiscal_position_choser"/>
+        </div>
     </template>
+
     <template id="filter_info_template_inherit" inherit_id="account_reports.filter_info_template" priority="1">
-        <xpath expr="//div[@class='col-4'][2]" position="inside">
+        <xpath expr="//div[hasclass('col-4')][2]" position="inside">
            <div class="col-12">
                 <t t-if="options.get('accounts')">
                     Accounts:
