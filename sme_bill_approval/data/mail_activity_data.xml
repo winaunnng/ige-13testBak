@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mail_activity_data_bill_approval" model="mail.activity.type">
+            <field name="name">Bill / Journal Approval</field>
+            <field name="icon">fa-check-circle</field>
+            <field name="sequence">4</field>
+            <field name="res_model">account.move</field>
+        </record>
+        <template id="account_move_template_refuse_reason">
+            <p>Your <span t-if="type == 'entry'"> journal entry </span>
+                <span t-if="type == 'in_invoice'"> bill </span>
+                <span t-if="name != '/'" t-esc="name"/> <span t-if="ref"> (Ref- <t t-esc="ref"/>) </span> has been refused</p>
+            <ul class="o_timeline_tracking_value_list">
+                <li>Reason : <t t-esc="reason"/></li>
+            </ul>
+        </template>
+    </data>
+</odoo>

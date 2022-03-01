@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record forcecreate="True" id="decimal_cost_share" model="decimal.precision">
+            <field name="name">Cost Share</field>
+            <field name="digits">8</field>
+        </record>
+  </data>
+</odoo>

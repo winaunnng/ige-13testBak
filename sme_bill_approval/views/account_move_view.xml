@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+       <record id="view_move_form_inherit" model="ir.ui.view">
+            <field name="name">account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                 <field name="bank_partner_id" position="after">
+                    <field name="user_status" invisible="1"/>
+                       <field name="account_move_individual_approval" invisible="1"/>
+                  </field>
+
+                 <xpath expr="//form/header/button[@name='action_post'][1]" position="replace">
+                     <button name="action_post" string="Post" class="oe_highlight" type="object" groups="account.group_account_invoice" data-hotkey="v" attrs="{'invisible': ['|', '|', '|',('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '!=', 'entry'),('account_move_individual_approval','=',True)]}"/>
+                     <button name="action_submit" string="Submit" type="object" class="oe_highlight" attrs="{'invisible': ['|','|',('move_type', 'not in',('in_invoice','entry')),('state', '!=','draft'),('account_move_individual_approval','=',False)]}"/>
+                     <button name="button_approve" type="object" string="Approve" class="oe_highlight" attrs="{'invisible':[('user_status','!=','submit')]}"/>
+                     <button name="943" type="action" string="Refuse" class="oe_highlight" attrs="{'invisible':[('user_status','!=','submit')]}"/>
+
+                    <!--name="button_refuse"-->
+
+                 </xpath>
+
+                <xpath expr="//form/header/button[@name='action_post'][2]" position="replace">
+                     <button name="action_post" string="Confirm" class="oe_highlight" type="object" groups="account.group_account_invoice" data-hotkey="v" attrs="{'invisible': ['|', '|', '|',('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '=', 'entry'), ('account_move_individual_approval','=',True)]}"/>
+
+                     <button name="action_post" string="Confirm" class="oe_highlight" type="object" groups="account.group_account_invoice" data-hotkey="v" attrs="{'invisible': ['|', '|', '|', '|',('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', 'in', ('entry','in_invoice')), ('display_inactive_currency_warning','=',True),('account_move_individual_approval','=',False)]}"/>
+
+                </xpath>
+
+                 <button name="button_draft" position="replace">
+                         <button name="button_draft" string="Reset to Draft" type="object" groups="account.group_account_invoice" attrs="{'invisible' : ['|', ('restrict_mode_hash_table', '=', True), ('state', 'not in', ('posted'))]}"/>
+                 </button>
+
+                 <xpath expr="//page[@id='aml_tab']" position="after">
+                     <page string="Approver(s)" name="bill_approvers" attrs="{'invisible': ['|',('move_type', 'not in',('in_invoice','entry')),('account_move_individual_approval','!=',True)]}">
+                            <field name="approver_ids" mode="tree,kanban" attrs="{'readonly': [('state', 'in',('done','purchase'))]}">
+                                <tree editable="bottom" decoration-success="status=='posted'" decoration-warning="status=='submit'" decoration-danger="status=='cancel'">
+<!--                                    <field name="sequence"/>-->
+                                    <field name="user_id" string="Approver" attrs="{'readonly':[('status','!=','draft')]}"/>
+                                    <field name="status"/>
+                                    <button name="action_create_activity" type="object" icon="fa-paper-plane" width="0.1" role="img" title="Submit Approval" attrs="{'invisible': [('status', '!=', 'draft')]}"/>
+                                </tree>
+                                <kanban class="o_kanban_mobile">
+                                    <field name="user_id"/>
+                                    <field name="status"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="o_kanban_content">
+                                                    <t t-esc="record.user_id.value"/>
+                                                    <t t-if="record.status.raw_value">
+                                                        <t t-set="classname" t-value="{'approved': 'badge-success', 'pending': 'badge-warning', 'cancel': 'badge-danger'}[record.status.raw_value] || 'badge-light'"/>
+                                                        <span t-esc="record.status.raw_value" t-attf-class="float-right badge-pill {{ classname }}"/>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form>
+                                    <group>
+                                        <field name="user_id"/>
+                                    </group>
+                                </form>
+                            </field>
+                     </page>
+                </xpath>
+            </field>
+       </record>
+
+          <record id="view_account_invoice_filter_approval_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.select.approval.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+           <field name="arch" type="xml">
+                <filter name="draft" position="after">
+                     <filter name="submit" string="To Approve" domain="[('state','=','submit')]"/>
+                </filter>
+           </field>
+          </record>
+
+          <record id="view_invoice_tree_approval_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.tree.approval.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <field name="amount_untaxed_signed" position="before">
+                      <field name="approver_ids" widget="many2many_tags" optional="hide"/>
+                </field>
+
+            </field>
+          </record>
+
+</odoo>
