@@ -24,5 +24,6 @@
         'security/expense_security.xml',
 
     ],
+    'license': 'LGPL-3',
 
 }
