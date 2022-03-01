@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <data>
+             <record id="action_hr_job_report" model="ir.actions.report">
+                <field name="name">HR Job Report</field>
+                <field name="model">hr.job</field>
+                <field name="report_type">xlsx</field>
+                <field name="report_name">sme_hr.xlsx_hr_job_report</field>
+                <field name="report_file">hr_job_report</field>
+                <field name="print_report_name">'Job Position Report'</field>
+                <field name="binding_model_id" ref="hr.model_hr_job"/>
+                <field name="binding_type">report</field>
+            </record>
+            <record id="action_payroll_run_report" model="ir.actions.report">
+                <field name="name">HR Payroll Run Report</field>
+                <field name="model">hr.payslip.run</field>
+                <field name="report_type">xlsx</field>
+                <field name="report_name">sme_hr.xlsx_payroll_run_report</field>
+                <field name="report_file">payroll_run_report</field>
+                <field name="print_report_name">'Batch - Payroll Report'</field>
+                <field name="binding_model_id" ref="hr_payroll.model_hr_payslip_run"/>
+                <field name="binding_type">report</field>
+            </record>
+
+           <record id="action_payroll_xls_report" model="ir.actions.report">
+                <field name="name">HR Payroll Report</field>
+                <field name="model">hr.payslip</field>
+                <field name="report_type">xlsx</field>
+                <field name="report_name">sme_hr.xlsx_payroll_report</field>
+                <field name="report_file">payroll_report</field>
+                <field name="print_report_name">'Payroll Report'</field>
+                <field name="binding_model_id" ref="hr_payroll.model_hr_payslip"/>
+                <field name="binding_type">report</field>
+            </record>
+       </data>
+</odoo>
