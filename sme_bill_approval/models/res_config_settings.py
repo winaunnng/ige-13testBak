@@ -7,7 +7,7 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    account_move_individual_approval = fields.Boolean("Bill and Journal Entry Individual Approval",related='company_id.account_move_individual_approval',
-                                            default=False,readonly=False)
+    account_move_individual_approval = fields.Boolean(related='company_id.account_move_individual_approval',
+                string="Bill and Journal Entry Individual Approval",readonly=False)
 
 

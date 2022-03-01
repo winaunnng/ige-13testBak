@@ -6,13 +6,12 @@ from odoo.exceptions import UserError, ValidationError
 class Company(models.Model):
     _inherit = 'res.company'
 
-    account_move_individual_approval = fields.Boolean(string='Bill Individual Approval',default=False)
-
+    account_move_individual_approval = fields.Boolean(string='Bill Individual Approval')
 
 
 class AccountMove(models.Model):
     _inherit = "account.move"
-    _description = "Invoice / Bill / Journal Entries"
+    _description = "Journal Entries ( Invoice/Bill )"
 
     account_move_individual_approval = fields.Boolean(string='Bill Individual Approval',
                                             related='company_id.account_move_individual_approval')
@@ -29,78 +28,76 @@ class AccountMove(models.Model):
         It could either be passed through the context using the 'default_journal_id' key containing its id,
         either be determined by the default type.
         '''
-        move_type = self._context.get('default_type', 'entry')
-        journal_type = 'general'
+        move_type = self._context.get('default_move_type', 'entry')
         if move_type in self.get_sale_types(include_receipts=True):
-            journal_type = 'sale'
+            journal_types = ['sale']
         elif move_type in self.get_purchase_types(include_receipts=True):
-            journal_type = 'purchase'
+            journal_types = ['purchase']
+        else:
+            journal_types = self._context.get('default_move_journal_types', ['general'])
 
         if self._context.get('default_journal_id'):
             journal = self.env['account.journal'].browse(self._context['default_journal_id'])
 
-            if move_type != 'entry' and journal.type != journal_type:
-                raise UserError(_("Cannot create an invoice of type %s with a journal having %s as type.") % (
-                move_type, journal.type))
+            if move_type != 'entry' and journal.type not in journal_types:
+                raise UserError(_(
+                    "Cannot create an invoice of type %(move_type)s with a journal having %(journal_type)s as type.",
+                    move_type=move_type,
+                    journal_type=journal.type,
+                ))
         else:
-            company_id = self._context.get('force_company',
-                                           self._context.get('default_company_id', self.env.company.id))
-            domain = [('company_id', '=', company_id), ('type', '=', journal_type)]
+            journal = self._search_default_journal(journal_types)
 
-            journal = None
-            if self._context.get('default_currency_id'):
-                currency_domain = domain + [('currency_id', '=', self._context['default_currency_id'])]
-                journal = self.env['account.journal'].search(currency_domain, limit=1)
-
-            if not journal:
-                journal = self.env['account.journal'].search(domain, limit=1)
-
-            if not journal:
-                error_msg = _('Please define an accounting miscellaneous journal in your company')
-                if journal_type == 'sale':
-                    error_msg = _('Please define an accounting sale journal in your company')
-                elif journal_type == 'purchase':
-                    error_msg = _('Please define an accounting purchase journal in your company')
-                raise UserError(error_msg)
         return journal
+
 
     @api.model
     def _get_default_invoice_date(self):
         return fields.Date.context_today(self) if self._context.get('default_type', 'entry') in self.get_purchase_types(include_receipts=True) else False
 
-    date = fields.Date(string='Date', required=True, index=True, readonly=True,
-                       states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
-                       default=fields.Date.context_today)
+    date = fields.Date(
+        string='Date',
+        required=True,
+        index=True,
+        readonly=True,
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
+        copy=False,
+        tracking=True,
+        default=fields.Date.context_today
+    )
     journal_id = fields.Many2one('account.journal', string='Journal', required=True, readonly=True,
                                  states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
-                                 domain="[('company_id', '=', company_id)]",
+                                 check_company=True, domain="[('id', 'in', suitable_journal_ids)]",
                                  default=_get_default_journal)
+
     currency_id = fields.Many2one('res.currency', store=True, readonly=True, tracking=True, required=True,
-                                  states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
-                                  string='Currency',
-                                  default=_get_default_currency)
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
+        string='Currency',
+        default=_get_default_currency)
     line_ids = fields.One2many('account.move.line', 'move_id', string='Journal Items', copy=True, readonly=True,
-                               states={'draft': [('readonly', False)],'submit': [('readonly', False)]})
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]})
     partner_id = fields.Many2one('res.partner', readonly=True, tracking=True,
-                                 states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
-                                 domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
-                                 string='Partner', change_default=True)
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
+        check_company=True,
+        string='Partner', change_default=True)
 
     fiscal_position_id = fields.Many2one('account.fiscal.position', string='Fiscal Position', readonly=True,
-                                         states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
-                                         domain="[('company_id', '=', company_id)]", ondelete="restrict",
-                                         help="Fiscal positions are used to adapt taxes and accounts for particular customers or sales orders/invoices. "
-                                              "The default value comes from the customer.")
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
+        check_company=True,
+        domain="[('company_id', '=', company_id)]", ondelete="restrict",
+        help="Fiscal positions are used to adapt taxes and accounts for particular customers or sales orders/invoices. "
+             "The default value comes from the customer.")
 
     invoice_date = fields.Date(string='Invoice/Bill Date', readonly=True, index=True, copy=False,
-                               states={'draft': [('readonly', False)],'submit': [('readonly', False)]},
-                               default=_get_default_invoice_date)
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]})
+
     invoice_date_due = fields.Date(string='Due Date', readonly=True, index=True, copy=False,
-                                   states={'draft': [('readonly', False)],'submit': [('readonly', False)]})
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]})
+
     invoice_line_ids = fields.One2many('account.move.line', 'move_id', string='Invoice lines',
-                                       copy=False, readonly=True,
-                                       domain=[('exclude_from_invoice_tab', '=', False)],
-                                       states={'draft': [('readonly', False)],'submit': [('readonly', False)]})
+        copy=False, readonly=True,
+        domain=[('exclude_from_invoice_tab', '=', False)],
+        states={'draft': [('readonly', False)],'submit': [('readonly', False)]})
 
     approver_ids = fields.One2many('account.move.approver', 'move_id', string="Approvers")
     state = fields.Selection(selection=[
@@ -169,7 +166,7 @@ class AccountMove(models.Model):
         result ={}
         if status_lst.count('posted') == approvers:
             self.action_post()
-            type = 'Bill' if self.type == 'in_invoice' else 'Journal Entry'
+            type = 'Bill' if self.move_type == 'in_invoice' else 'Journal Entry'
             ref = _("( Ref - %s )") % self.ref if self.ref else ''
             if self.user_id:
                 self.message_notify(
@@ -194,7 +191,7 @@ class AccountMove(models.Model):
             approver.write({'status': 'cancel'})
             self.sudo()._get_user_approval_activities(user=self.env.user).action_feedback()
             self.message_post_with_view('sme_bill_approval.account_move_template_refuse_reason',
-                                   values={'reason': reason,'name': self.name,'ref': self.ref,'type': self.type})
+                                   values={'reason': reason,'name': self.name,'ref': self.ref,'type': self.move_type})
         status_lst = self.mapped('approver_ids.status')
         approvers = len(status_lst)
         result = {}
