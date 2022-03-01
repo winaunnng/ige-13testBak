@@ -5,7 +5,6 @@
         <field name="model">purchase.refuse.wizard</field>
         <field name="arch" type="xml">
             <form string="Purchase refuse reason">
-                <separator string="Reason to refuse Purchase"/>
                 <field name="order_id" invisible="1"/>
                 <field name="reason"/>
                 <footer>
@@ -17,7 +16,7 @@
     </record>
 
     <record id="purchase_refuse_wizard_action" model="ir.actions.act_window">
-        <field name="name">Refuse Purchase </field>
+        <field name="name"> Reason to refuse Purchase </field>
         <field name="res_model">purchase.refuse.wizard</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="purchase_refuse_wizard_view_form"/>

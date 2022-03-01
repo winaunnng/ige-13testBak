@@ -5,7 +5,7 @@
             <field name="name">Purchase Approval</field>
             <field name="icon">fa-check-circle</field>
             <field name="sequence">4</field>
-            <field name="res_model_id" ref="purchase.model_purchase_order"/>
+            <field name="res_model">purchase.order</field>
         </record>
 
         <template id="purchase_template_refuse_reason">
@@ -14,9 +14,5 @@
                 <li>Reason : <t t-esc="reason"/></li>
             </ul>
         </template>
-<!--        <template id="purchase_template_approve">-->
-<!--            <p>Your Purchase Order <t t-esc="name"/> has been approved</p>-->
-<!--        </template>-->
-
     </data>
 </odoo>
