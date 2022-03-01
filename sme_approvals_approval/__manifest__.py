@@ -17,9 +17,10 @@
     'depends': ['approvals'],
 
     'data': [
+        'security/ir.model.access.csv',
         'wizard/approval_refuse_reason.xml',
         'views/approval_views.xml',
         'data/approval_category_data.xml',
-        'security/approval_security.xml',
     ],
+    'license': 'LGPL-3',
 }

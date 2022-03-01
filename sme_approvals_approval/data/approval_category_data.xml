@@ -7,7 +7,6 @@
             <field name="sequence">80</field>
             <field name="has_date">no</field>
             <field name="has_period">no</field>
-            <field name="has_item">no</field>
             <field name="has_quantity">no</field>
             <field name="has_amount">required</field>
             <field name="has_reference">no</field>
@@ -18,7 +17,7 @@
             <field name="has_analytic_account">required</field>
             <field name="requirer_document">optional</field>
             <field name="approval_minimum">1</field>
-            <field name="is_manager_approver">False</field>
+<!--            <field name="is_manager_approver">False</field>-->
         </record>
         <template id="approval_template_refuse_reason">
             <p>Your approval request <t t-esc="name"/> <span t-if="ref"> (Ref- <t t-esc="ref"/>) </span> has been refused</p>
